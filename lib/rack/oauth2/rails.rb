@@ -36,7 +36,7 @@ module Rack
     #
     #   protected 
     #     def current_user
-    #       @current_user ||= User.find(oauth.identity) if oauth.authenticated?
+    #       @current_user ||= User.find(:_id => oauth.identity).one if oauth.authenticated?
     #     end
     #   end
     #

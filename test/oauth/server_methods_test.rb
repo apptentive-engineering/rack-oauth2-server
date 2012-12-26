@@ -48,7 +48,7 @@ class ServerTest < Test::Unit::TestCase
       end
 
       should "create new client" do
-        assert_equal 2, Server::Client.collection.count
+        assert_equal 2, Server::Client.collection.find.count
         assert_contains Server::Client.all.map(&:id), @client.id
       end
 
@@ -89,7 +89,7 @@ class ServerTest < Test::Unit::TestCase
         end
 
         should "create new client" do
-          assert_equal 2, Server::Client.collection.count
+          assert_equal 2, Server::Client.collection.find.count
         end
 
         should "should assign it the client identifier" do
@@ -112,7 +112,7 @@ class ServerTest < Test::Unit::TestCase
         end
 
         should "not create new client" do
-          assert_equal 2, Server::Client.collection.count
+          assert_equal 2, Server::Client.collection.find.count
         end
 
         should "should not change the client identifier" do

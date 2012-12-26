@@ -1,4 +1,3 @@
-require "mongo"
 require "openssl"
 require "rack/oauth2/server/errors"
 require "rack/oauth2/server/utils"
@@ -22,7 +21,7 @@ module Rack
         def secure_random
           OpenSSL::Random.random_bytes(32).unpack("H*")[0]
         end
-        
+
         # @private
         def create_indexes(&block)
           if block
@@ -35,16 +34,16 @@ module Rack
             @create_indexes = nil
           end
         end
- 
+
         # A Mongo::DB object.
         def database
           @database ||= Server.options.database
-          raise "No database Configured. You must configure it using Server.options.database = Mongo::Connection.new()[db_name]" unless @database
-          raise "You set Server.database to #{Server.database.class}, should be a Mongo::DB object" unless Mongo::DB === @database
+          raise "No database Configured. You must configure it using Server.options.database = Moped::Session.new([ '127.0.0.1:27017' ]).use db_name" unless @database
+          raise "You set Server.database to #{Server.database.class}, should be a Moped::Session object" unless Moped::Session === @database
           @database
         end
       end
- 
+
     end
   end
 end

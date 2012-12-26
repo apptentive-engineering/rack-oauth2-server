@@ -5,6 +5,9 @@ doc
 *.gem
 test/rails/log
 *.lock
+.kdev4/
+*.kdev4
+vendor/bundle
 test/*/log/test.log
 test.log
 lib/rack/oauth2/admin/js/application.js
