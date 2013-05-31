@@ -213,9 +213,10 @@ module Rack
             # 5.2.  The WWW-Authenticate Response Header Field
             logger.info "RO2S: HTTP authorization failed #{error.code}" if logger
             return unauthorized(request, error)
-          rescue =>ex
+          rescue => ex
             logger.info "RO2S: HTTP authorization failed #{ex.message}" if logger
-            return unauthorized(request)
+            request.env['rack.exception'] = ex
+            return [ 500, {}, [ex.message || ""] ]
           end
 
           # We expect application to use 403 if request has insufficient scope,
