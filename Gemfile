@@ -1,10 +1,14 @@
 source 'https://rubygems.org'
 gemspec
 
+gem "json"
+
 group :development do
   gem "rake"
   gem "thin"
   gem "yard"
+  gem "rails", "> 4.0"
+  gem 'byebug'
 end
 
 group :test do
@@ -13,3 +17,4 @@ group :test do
   gem "shoulda"
   gem "timecop"
 end
+

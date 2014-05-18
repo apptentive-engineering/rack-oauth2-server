@@ -1,6 +1,6 @@
 require "test/setup"
 
-class AdminApiTest < Test::Unit::TestCase
+class AdminApiTest < Minitest::Test
   module Helpers
     def should_fail_authentication
       should "respond with status 401 (Unauthorized)" do

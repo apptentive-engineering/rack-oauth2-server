@@ -2,7 +2,7 @@ require "test/setup"
 
 
 # 3.  Obtaining End-User Authorization
-class AuthorizationTest < Test::Unit::TestCase
+class AuthorizationTest < Minitest::Test
   module Helpers
 
     def should_redirect_with_error(error)

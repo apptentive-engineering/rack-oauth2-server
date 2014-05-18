@@ -8,9 +8,9 @@ module Rack
           # Authenticate a client request. This method takes three arguments,
           # Find Client from client identifier.
           def find(client_id)
-            id = Moped::BSON::ObjectId(client_id.to_s)
+            id = BSON::ObjectId.from_string(client_id.to_s)
             Server.new_instance self, collection.find(:_id => id).one
-          rescue Moped::Errors::InvalidObjectId
+          rescue BSON::ObjectId::Invalid
           end
 
           # Create a new client. Client provides the following properties:
@@ -33,13 +33,13 @@ module Rack
                         :notes=>args[:notes].to_s, :scope=>scope,
                         :created_at=>Time.now.to_i, :revoked=>nil }
             if args[:id] && args[:secret]
-              fields[:_id], fields[:secret] = Moped::BSON::ObjectId(args[:id].to_s), args[:secret]
+              fields[:_id], fields[:secret] = BSON::ObjectId.from_string(args[:id].to_s), args[:secret]
               collection.database.session.with(safe: true) do
                 collection.insert(fields)
               end
             else
               fields[:secret] = Server.secure_random
-              fields[:_id] = Moped::BSON::ObjectId.new
+              fields[:_id] = BSON::ObjectId.new
               collection.insert(fields)
             end
             Server.new_instance self, fields
@@ -47,9 +47,9 @@ module Rack
 
           # Lookup client by ID, display name or URL.
           def lookup(field)
-            id = Moped::BSON::ObjectId(field.to_s)
+            id = BSON::ObjectId.from_string(field.to_s)
             Server.new_instance self, collection.find(:_id => id).one
-          rescue Moped::Errors::InvalidObjectId
+          rescue BSON::ObjectId::Invalid
             Server.new_instance self, collection.find(:display_name=>field).one || collection.find(:link=>field).one
           end
 
@@ -61,7 +61,7 @@ module Rack
 
           # Deletes client with given identifier (also, all related records).
           def delete(client_id)
-            id = Moped::BSON::ObjectId(client_id.to_s)
+            id = BSON::ObjectId.from_string(client_id.to_s)
             Client.collection.remove({ :_id=>id })
             AuthRequest.collection.remove({ :client_id=>id })
             AccessGrant.collection.remove({ :client_id=>id })

@@ -412,7 +412,7 @@ module Rack
         end
         raise InvalidClientError if client.revoked
         return client
-      rescue Moped::Errors::InvalidObjectId
+      rescue BSON::ObjectId::Invalid
         raise InvalidClientError
       end
 

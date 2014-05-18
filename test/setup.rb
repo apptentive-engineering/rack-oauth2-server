@@ -1,6 +1,6 @@
 require "bundler"
 Bundler.setup
-require "test/unit"
+require "minitest/autorun"
 require "rack/test"
 require "shoulda"
 require "timecop"
@@ -53,21 +53,21 @@ when "sinatra", nil
   end
 
 when "rails"
-
+  ver = Bundler.definition.specs['rails'][0].version.version.split('.')[0].to_i
   RAILS_ENV = "test"
-  RAILS_ROOT = File.dirname(__FILE__) + "/rails3"
+  RAILS_ROOT = File.dirname(__FILE__) + "/rails#{ver}"
   begin
     require "rails"
   rescue LoadError
   end
 
   if defined?(Rails::Railtie)
-    # Rails 3.x
+    # Rails 3.x+
     require "rack/oauth2/server/railtie"
-    require File.dirname(__FILE__) + "/rails3/config/environment"
+    require File.dirname(__FILE__) + "/rails#{ver}/config/environment"
     puts "Testing with Rails #{Rails.version}"
   
-    class Test::Unit::TestCase
+    class Minitest::Test
       def app
         ::Rails.application
       end
@@ -79,7 +79,6 @@ when "rails"
 
   else
     # Rails 2.x
-    RAILS_ROOT = File.dirname(__FILE__) + "/rails2"
     require "initializer"
     require "action_controller"
     require File.dirname(__FILE__) + "/rails2/config/environment"
@@ -102,7 +101,7 @@ else
 end
 
 
-class Test::Unit::TestCase
+class Minitest::Test
   include Rack::Test::Methods
   include Rack::OAuth2
 

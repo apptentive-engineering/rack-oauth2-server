@@ -1,6 +1,6 @@
 require "test/setup"
 
-class AdminUiTest < Test::Unit::TestCase
+class AdminUiTest < Minitest::Test
   context "/" do
     setup { get "/oauth/admin" }
     should "return OK" do

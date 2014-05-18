@@ -9,9 +9,9 @@ module Rack
         class << self
           # Find AuthRequest from identifier.
           def find(request_id)
-            id = Moped::BSON::ObjectId(request_id.to_s)
+            id = BSON::ObjectId.from_string(request_id.to_s)
             Server.new_instance self, collection.find(:_id => id).one
-          rescue Moped::Errors::InvalidObjectId
+          rescue BSON::ObjectId::Invalid
           end
 
           # Create a new authorization request. This holds state, so in addition
@@ -19,7 +19,7 @@ module Rack
           # and any state value to pass back in that redirect.
           def create(client, scope, redirect_uri, response_type, state)
             scope = Utils.normalize_scope(scope) & client.scope # Only allowed scope
-            fields = { :_id => Moped::BSON::ObjectId.new,
+            fields = { :_id => BSON::ObjectId.new,
                        :client_id=>client.id, :scope=>scope, :redirect_uri=>client.redirect_uri || redirect_uri,
                        :response_type=>response_type, :state=>state,
                        :grant_code=>nil, :authorized_at=>nil,

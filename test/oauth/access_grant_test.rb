@@ -2,7 +2,7 @@ require "test/setup"
 
 
 # 4.  Obtaining an Access Token
-class AccessGrantTest < Test::Unit::TestCase
+class AccessGrantTest < Minitest::Test
   module Helpers
 
     def should_return_error(error)
@@ -272,5 +272,4 @@ class AccessGrantTest < Test::Unit::TestCase
     setup { request_with_username_password "cowbell", "more", "read" }
     should_respond_with_access_token "read"
   end
-  
 end

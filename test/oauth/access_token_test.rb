@@ -2,7 +2,7 @@ require "test/setup"
 
 
 # 5.  Accessing a Protected Resource
-class AccessTokenTest < Test::Unit::TestCase
+class AccessTokenTest < Minitest::Test
   module Helpers
 
     def should_return_resource(content)
