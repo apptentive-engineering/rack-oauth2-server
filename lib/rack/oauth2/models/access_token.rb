@@ -96,21 +96,6 @@ module Rack
         attr_reader :expires_at
         # Timestamp if revoked.
         attr_accessor :revoked
-        # Timestamp of last access using this token, rounded up to hour.
-        attr_accessor :last_access
-        # Timestamp of previous access using this token, rounded up to hour.
-        attr_accessor :prev_access
-
-        # Updates the last access timestamp.
-        def access!
-          today = (Time.now.to_i / 3600) * 3600
-          if last_access.nil? || last_access < today
-            Server.database.with(safe: { w: 0 }) do |weak|
-              weak["oauth2.access_tokens"].find(_id: token).update(:$set => { last_access: today, prev_access: last_access })
-            end
-            self.last_access = today
-          end
-        end
 
         # Revokes this access token.
         def revoke!
