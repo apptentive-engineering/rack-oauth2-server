@@ -8,6 +8,7 @@ group :development do
 end
 
 group :test do
+  gem "test-unit"
   gem "awesome_print"
   gem "rack-test"
   gem "shoulda"
