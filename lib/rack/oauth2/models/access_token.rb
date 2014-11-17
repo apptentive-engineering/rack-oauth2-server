@@ -105,7 +105,9 @@ module Rack
         def access!
           today = (Time.now.to_i / 3600) * 3600
           if last_access.nil? || last_access < today
-            AccessToken.collection.find(:_id=>token).update( :$set=>{ :last_access=>today, :prev_access=>last_access } )
+            Server.database.with(safe: { w: 0 }) do |weak|
+              weak["oauth2.access_tokens"].find(_id: token).update(:$set => { last_access: today, prev_access: last_access })
+            end
             self.last_access = today
           end
         end
