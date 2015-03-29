@@ -27,7 +27,7 @@ module Rack
                         :client_id=>client.id, :created_at=>Time.now.to_i,
                         :expires_at=>expires_at, :revoked=>nil }
               collection.insert token
-              Client.collection.find(:_id=>client.id).update( :$inc=>{ :tokens_granted=>1 } )
+              # Client.collection.find(:_id=>client.id).update( :$inc=>{ :tokens_granted=>1 } )
             end
             Server.new_instance self, token
           end
