@@ -27,7 +27,7 @@ module Rack
                         :client_id=>client.id, :created_at=>Time.now.to_i,
                         :expires_at=>expires_at, :revoked=>nil }
               collection.insert token
-              Client.collection.find(:_id=>client.id).update( :$inc=>{ :tokens_granted=>1 } )
+              # Client.collection.find(:_id=>client.id).update( :$inc=>{ :tokens_granted=>1 } )
             end
             Server.new_instance self, token
           end
@@ -96,19 +96,6 @@ module Rack
         attr_reader :expires_at
         # Timestamp if revoked.
         attr_accessor :revoked
-        # Timestamp of last access using this token, rounded up to hour.
-        attr_accessor :last_access
-        # Timestamp of previous access using this token, rounded up to hour.
-        attr_accessor :prev_access
-
-        # Updates the last access timestamp.
-        def access!
-          today = (Time.now.to_i / 3600) * 3600
-          if last_access.nil? || last_access < today
-            AccessToken.collection.find(:_id=>token).update( :$set=>{ :last_access=>today, :prev_access=>last_access } )
-            self.last_access = today
-          end
-        end
 
         # Revokes this access token.
         def revoke!

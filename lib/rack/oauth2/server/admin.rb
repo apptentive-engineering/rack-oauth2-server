@@ -239,7 +239,6 @@ module Rack
             { :token=>token.token, :identity=>token.identity, :scope=>token.scope, :created=>token.created_at,
               :expired=>token.expires_at, :revoked=>token.revoked,
               :link=>settings.template_url && settings.template_url.gsub("{id}", token.identity),
-              :last_access=>token.last_access,
               :revoke=>"#{request.script_name}/api/token/#{token.token}/revoke" }
           end
         end
