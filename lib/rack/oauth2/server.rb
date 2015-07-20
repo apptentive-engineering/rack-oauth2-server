@@ -429,7 +429,9 @@ module Rack
       def unauthorized(request, error = nil)
         challenge = 'OAuth realm="%s"' % (options.realm || request.host)
         challenge << ', error="%s", error_description="%s"' % [error.code, error.message] if error
-        return [401, { "WWW-Authenticate"=>challenge }, [error && error.message || ""]]
+        body = error && error.message || ""
+        body = { "error" => body }.to_json
+        return [401, { "WWW-Authenticate"=>challenge }, [body]]
       end
 
       # Wraps Rack::Request to expose Basic and OAuth authentication

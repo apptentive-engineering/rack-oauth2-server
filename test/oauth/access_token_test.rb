@@ -14,7 +14,7 @@ class AccessTokenTest < Minitest::Test
       end
     end
 
-    def should_fail_authentication(error = nil)
+    def should_fail_authentication(error = nil, json = false)
       should "respond with status 401 (Unauthorized)" do
         assert_equal 401, last_response.status
       end
@@ -27,6 +27,12 @@ class AccessTokenTest < Minitest::Test
       if error
         should "respond with error code #{error}" do
           assert_match " error=\"#{error}\"", last_response["WWW-Authenticate"]
+        end
+
+        if json
+          should "respond with json body" do
+            assert_equal Rack::OAuth2::Server::MESSAGES[error], JSON.parse(last_response.body)["error"]
+          end
         end
       else
         should "not respond with error code" do
@@ -116,6 +122,15 @@ class AccessTokenTest < Minitest::Test
           get "/private"
         end
         should_fail_authentication :invalid_token
+      end
+
+      context "unknown token expecting json" do
+        setup do
+          with_token "dingdong"
+          header "Accept", "application/json"
+          get "/private"
+        end
+        should_fail_authentication :invalid_token, true
       end
 
       context "revoked HTTP token" do
