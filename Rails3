@@ -1,8 +1,12 @@
-source :rubygems
+source "https://rubygems.org"
+
 gemspec
+
 gem "awesome_print"
 gem "json"
 gem "rack-test"
-gem "rails", "~>3.0"
+gem "rails", "~> 3.0"
 gem "shoulda"
 gem "timecop"
+gem "test-unit"
+gem "pry-doc"

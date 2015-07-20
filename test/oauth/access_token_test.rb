@@ -28,6 +28,11 @@ class AccessTokenTest < Test::Unit::TestCase
         should "respond with error code #{error}" do
           assert_match " error=\"#{error}\"", last_response["WWW-Authenticate"]
         end
+
+        should "respond with json body" do
+          assert_equal "application/json", last_response.content_type
+          assert_equal Rack::OAuth2::Server::MESSAGES[error], JSON.parse(last_response.body)["error"]
+        end
       else
         should "not respond with error code" do
           assert !last_response["WWW-Authenticate"]["error="]

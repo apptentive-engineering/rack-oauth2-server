@@ -14,8 +14,8 @@ class AdminApiTest < Test::Unit::TestCase
       end
     end
   end
-  extend Helpers
 
+  extend Helpers
 
   def without_scope
     token = Server.token_for("Superman", client.id, "nobody", 0)
@@ -30,7 +30,6 @@ class AdminApiTest < Test::Unit::TestCase
   def json
     JSON.parse(last_response.body)
   end
-
 
   context "force SSL" do
     setup do
@@ -58,7 +57,6 @@ class AdminApiTest < Test::Unit::TestCase
 
     teardown { Server::Admin.force_ssl = false }
   end
-
 
   # -- /oauth/admin/api/clients
 
@@ -148,12 +146,12 @@ class AdminApiTest < Test::Unit::TestCase
       setup do
         tokens = []
         1.upto(10).map do |days|
-          Timecop.travel -days*86400 do
+          Timecop.travel(-days * 86400) do
             tokens << Server.token_for("Superman#{days}", client.id)
           end
         end
         # Revoke one token today (within past 7 days), one 10 days ago (beyond)
-        Timecop.travel -7 * 86400 do
+        Timecop.travel(-7 * 86400) do
           Server.get_access_token(tokens[0]).revoke!
         end
         Server.get_access_token(tokens[1]).revoke!
@@ -171,7 +169,6 @@ class AdminApiTest < Test::Unit::TestCase
       end
     end
   end
-
 
   # -- /oauth/admin/api/client/:id
 
@@ -224,5 +221,4 @@ class AdminApiTest < Test::Unit::TestCase
       end
     end
   end
-
 end

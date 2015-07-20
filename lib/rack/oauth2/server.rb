@@ -208,7 +208,7 @@ module Rack
 
             request.env["oauth.identity"] = access_token.identity
             logger.info "RO2S: Authorized #{access_token.identity}" if logger
-          rescue OAuthError=>error
+          rescue OAuthError => error
             # 5.2.  The WWW-Authenticate Response Header Field
             logger.info "RO2S: HTTP authorization failed #{error.code}" if logger
             return unauthorized(request, error)
@@ -429,7 +429,14 @@ module Rack
       def unauthorized(request, error = nil)
         challenge = 'OAuth realm="%s"' % (options.realm || request.host)
         challenge << ', error="%s", error_description="%s"' % [error.code, error.message] if error
-        return [401, { "WWW-Authenticate"=>challenge }, [error && error.message || ""]]
+
+        headers = {
+          "WWW-Authenticate" => challenge,
+          "Content-Type" => "application/json"
+        }
+        body = { "error" => (error && error.message) || "" }.to_json
+
+        return [401, headers, [body]]
       end
 
       # Wraps Rack::Request to expose Basic and OAuth authentication
