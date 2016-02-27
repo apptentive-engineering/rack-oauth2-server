@@ -7,15 +7,17 @@ require "timecop"
 require "ap"
 require "json"
 require "logger"
+require "mongo"
+
 $: << File.dirname(__FILE__) + "/../lib"
 $: << File.expand_path(File.dirname(__FILE__) + "/..")
 require "rack/oauth2/server"
 require "rack/oauth2/server/admin"
-require 'moped'
 
 ENV["RACK_ENV"] = "test"
 ENV["DB"] = "rack_oauth2_server_test"
-DATABASE = Moped::Session.new([ '127.0.0.1:27017' ])
+
+DATABASE = Mongo::Client.new(["localhost"])
 DATABASE.use(ENV["DB"])
 FRAMEWORK = ENV["FRAMEWORK"] || "sinatra"
 

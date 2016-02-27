@@ -9,9 +9,9 @@ module Rack
         class << self
           # Find AuthRequest from identifier.
           def find(request_id)
-            id = Moped::BSON::ObjectId(request_id.to_s)
-            Server.new_instance self, collection.find(:_id => id).one
-          rescue Moped::Errors::InvalidObjectId
+            id = BSON::ObjectId(request_id.to_s)
+            Server.new_instance self, collection.find(:_id => id).limit(1).first
+          rescue BSON::ObjectId::Invalid
           end
 
           # Create a new authorization request. This holds state, so in addition
@@ -19,12 +19,12 @@ module Rack
           # and any state value to pass back in that redirect.
           def create(client, scope, redirect_uri, response_type, state)
             scope = Utils.normalize_scope(scope) & client.scope # Only allowed scope
-            fields = { :_id => Moped::BSON::ObjectId.new,
+            fields = { :_id => BSON::ObjectId.new,
                        :client_id=>client.id, :scope=>scope, :redirect_uri=>client.redirect_uri || redirect_uri,
                        :response_type=>response_type, :state=>state,
                        :grant_code=>nil, :authorized_at=>nil,
                        :created_at=>Time.now.to_i, :revoked=>nil }
-            collection.insert(fields)
+            collection.insert_one(fields)
             Server.new_instance self, fields
           end
 
@@ -66,11 +66,11 @@ module Rack
           if response_type == "code" # Requested authorization code
             access_grant = AccessGrant.create(identity, client, scope, redirect_uri)
             self.grant_code = access_grant.code
-            self.class.collection.find(:_id=>id, :revoked=>nil).update( :$set=>{ :grant_code=>access_grant.code, :authorized_at=>authorized_at } )
+            self.class.collection.find(:_id=>id, :revoked=>nil).update_one( :$set=>{ :grant_code=>access_grant.code, :authorized_at=>authorized_at } )
           else # Requested access token
             access_token = AccessToken.get_token_for(identity, client, scope, expires_in)
             self.access_token = access_token.token
-            self.class.collection.find(:_id=>id, :revoked=>nil, :access_token=>nil).update( :$set=>{ :access_token=>access_token.token, :authorized_at=>authorized_at } )
+            self.class.collection.find(:_id=>id, :revoked=>nil, :access_token=>nil).update_one( :$set=>{ :access_token=>access_token.token, :authorized_at=>authorized_at } )
           end
           true
         end
@@ -78,7 +78,7 @@ module Rack
         # Deny access.
         def deny!
           self.authorized_at = Time.now.to_i
-          self.class.collection.find(:_id=>id).update( :$set=>{ :authorized_at=>authorized_at } )
+          self.class.collection.find(:_id=>id).update_one( :$set=>{ :authorized_at=>authorized_at } )
         end
 
         Server.create_indexes do

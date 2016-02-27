@@ -66,7 +66,7 @@ class AccessTokenTest < Test::Unit::TestCase
   end
   
   def expire
-    Rack::OAuth2::Server::AccessToken.collection.find(:_id => @token).update( :$set=> { :expires_at => (Time.now - 1).to_i } )
+    Rack::OAuth2::Server::AccessToken.collection.find(:_id => @token).update_one( :$set=> { :expires_at => (Time.now - 1).to_i } )
   end
   
   def with_expired_token

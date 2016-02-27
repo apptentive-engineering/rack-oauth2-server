@@ -24,7 +24,7 @@ module Rack
     #     oauth_required "/api"
     #     oauth_required "/api/edit", :scope=>"write"
     #
-    #     before { @user = User.find(:_id => oauth.identity).one  if oauth.authenticated? }
+    #     before { @user = User.find(:_id => oauth.identity).limit(1).first  if oauth.authenticated? }
     #   end
     #
     # @see Helpers

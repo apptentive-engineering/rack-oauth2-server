@@ -173,13 +173,13 @@ when "migrate"
     update = { :scope=>scope,
       :tokens_granted=>Server::AccessToken.count(:client_id=>client["_id"]),
       :tokens_revoked=>Server::AccessToken.count(:client_id=>client["_id"], :revoked=>true) }
-    Server::Client.collection.update({ :_id=>client["_id"] }, { :$set=>update })
+    Server::Client.collection.update_one({ :_id=>client["_id"] }, { :$set=>update })
   end
   [Server::AccessToken, Server::AccessGrant, Server::AuthRequest].each do |mod|
     puts "Updating #{mod.name} scope from string to array"
     mod.collection.find({ :scope=>{ :$type=>2 } }, :fields=>[]).each do |token|
       scope = token["scope"].split
-      mod.collection.update({ :_id=>token["_id"] }, { :$set=>{ :scope=>scope } })
+      mod.collection.update_one({ :_id=>token["_id"] }, { :$set=>{ :scope=>scope } })
     end
   end
 else
