@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 1.8.7'
   spec.add_dependency "rack", "~>1.1"
-  spec.add_dependency "bson", "4.0.2"
   spec.add_dependency "mongo", "~>2.2"
   spec.add_dependency "sinatra", "~>1.1"
 end
